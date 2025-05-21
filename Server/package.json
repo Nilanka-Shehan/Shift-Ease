@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "seed": "node admin-seed.js",
+    "start:prod": "npm run seed && node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "bcryptjs": "^3.0.2",
+    "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dot-env": "^0.0.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "google-auth-library": "^9.15.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.1",
+    "nodemailer": "^6.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
