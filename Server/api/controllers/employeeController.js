@@ -169,8 +169,6 @@ const setupAccount = async (req, res) => {
 //delete Employee
 const deleteEmployee = async (req, res) => {
   const empId = req.params.id;
-  console.log(typeof empId);
-  console.log(`empId:${empId}`);
   if (!mongoose.Types.ObjectId.isValid(empId)) {
     return res.status(400).json({ message: "Invalid ID format" });
   }
@@ -280,7 +278,6 @@ const login = async (req, res) => {
 
 //google login
 const googleLogin = async (req, res) => {
-  console.log(req.body);
   const { token } = req.body;
   if (!token) {
     return res
@@ -314,7 +311,6 @@ const googleLogin = async (req, res) => {
       }
     );
 
-    console.log(userInfoResponse.data);
     // Extract user info
     const { email, sub: googleId, picture, name } = userInfoResponse.data;
 

@@ -9,6 +9,7 @@ import EmployeeTable from "../../components/adminDashboard/EmployeeTable";
 import RequestTable from "../../components/adminDashboard/RequestTable";
 import ActionDrawer from "../../components/adminDashboard/ActionDrawer";
 import AddUserForm from "../../components/adminDashboard/AddUserForm";
+import { useOutletContext } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("requests");
@@ -21,50 +22,55 @@ const AdminDashboard = () => {
   const [showStatusDrawer, setShowStatusDrawer] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const { user } = useAuth();
-  //const [status, setStatus] = useState("");
-
+  const [pendingCount, setPendingCount] = useState(0);
+  const { setCount } = useOutletContext();
   const [inputValue, setInputValue] = useState({ empNumber: null, email: "" });
 
+
+  useEffect(() => {
+    setCount(pendingCount); 
+  }, [pendingCount, setCount]);
+
   const fetchUsers = useCallback(async () => {
-    const toastId = toast.loading("Fetching users...");
+    //const toastId = toast.loading("Fetching users...");
     try {
       const response = await axiosSecure.get("/user/get-all");
       setEmployees(response.data);
-      toast.update(toastId, {
-        render: "Users loaded successfully.",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-      });
+      // toast.update(toastId, {
+      //   render: "Users loaded successfully.",
+      //   type: "success",
+      //   isLoading: false,
+      //   autoClose: 2000,
+      // });
     } catch (error) {
       console.error("Error fetching users:", error);
-      toast.update(toastId, {
-        render: "Failed to load users.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      // toast.update(toastId, {
+      //   render: "Failed to load users.",
+      //   type: "error",
+      //   isLoading: false,
+      //   autoClose: 3000,
+      // });
     }
   }, [axiosSecure]);
   const fetchRequests = useCallback(async () => {
-    const toastId = toast.loading("Fetching requests...");
+    //const toastId = toast.loading("Fetching requests...");
     try {
       const response = await axiosSecure("/request/get-all");
       setRequests(response.data);
-      toast.update(toastId, {
-        render: "Requests loaded successfully.",
-        type: "success",
-        isLoading: false,
-        autoClose: 2000,
-      });
+      // toast.update(toastId, {
+      //   render: "Requests loaded successfully.",
+      //   type: "success",
+      //   isLoading: false,
+      //   autoClose: 2000,
+      // });
     } catch (error) {
       console.error("Error fetching requests:", error);
-      toast.update(toastId, {
-        render: "Failed to load requests.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      // toast.update(toastId, {
+      //   render: "Failed to load requests.",
+      //   type: "error",
+      //   isLoading: false,
+      //   autoClose: 3000,
+      // });
     }
   }, [axiosSecure]);
 
@@ -73,6 +79,7 @@ const AdminDashboard = () => {
     fetchRequests(); // initial fetch
 
     const interval = setInterval(() => {
+      fetchUsers();
       fetchRequests(); // refresh every 10 seconds
     }, 10000); // 10 sec
 
@@ -191,7 +198,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <div className="pt-18">
+      <div className="pt-18 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
         <div>
           <h1 className="px-5 pt-5 text-4xl">
             Welcome {user.username.split(" ")[0]}!
@@ -231,9 +238,10 @@ const AdminDashboard = () => {
           {/* Requests Table */}
           {activeTab === "requests" && (
             <RequestTable
-              requests={requests}
+              requests={requests || []}
               setSelectedRequestId={setSelectedRequestId}
               setShowStatusDrawer={setShowStatusDrawer}
+              setPendingCount={setPendingCount}
             />
           )}
 

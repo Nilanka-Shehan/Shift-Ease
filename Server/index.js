@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const { default: mongoose } = require("mongoose");
 require("dotenv").config();
+require("./autoUpdate");
 const port = process.env.PORT || 3001;
 
 app.use(express.json());

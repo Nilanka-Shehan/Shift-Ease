@@ -1,4 +1,3 @@
-// components/ConfirmationModel.jsx
 import React from "react";
 
 const ConfirmationModel = ({ onConfirm, message }) => {

@@ -1,12 +1,14 @@
 import React, { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 import TextFade from "../../components/TextFade";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useRoleCheck from "../../hooks/useRoleCheck";
 import { useEffect } from "react";
 import { useCallback } from "react";
+import AlertModel from "../../components/AlertModel";
 
 const EmployeeDashboard = () => {
   const [showForm, setShowForm] = useState(false);
@@ -20,6 +22,9 @@ const EmployeeDashboard = () => {
     noOfDays: null,
   });
   const { leaveType, date, noOfDays } = inputValue;
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [annual, setAnnual] = useState(7);
   const [casual, setCasual] = useState(14);
   const remainingDates = annual + casual;
@@ -27,6 +32,10 @@ const EmployeeDashboard = () => {
   const text = `If you would like to apply for leave on a specific date, please fill out the form below with all the required information. Ensure that the details provided are accurate to avoid any delays in processing your request.`;
 
   const handleRequestFormClick = () => {
+    if(remainingDates <= 0) {
+      setShowRequestForm(true);
+      return;
+    }
     setShowForm(true);
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -38,40 +47,50 @@ const EmployeeDashboard = () => {
     e.preventDefault();
     setShowForm(false);
 
-    const requestPromise = axiosSecure.post("/request/create-request", {
+    const payload = {
       empId: user.id,
       date,
       leaveType,
       noOfDays,
-    });
+    };
 
+    // Wrap your axios call inside a function so you can handle state changes separately
+    const requestPromise = axiosSecure.post("/request/create-request", payload);
     toast.promise(requestPromise, {
       pending: "Submitting your request...",
-      success: {
-        render({ data }) {
-          refetch();
-          //reset form fields
-          setInputValue({
-            leaveType: "",
-            date: "",
-            noOfDays: null,
-          });
-          return data?.data?.message || "Request submitted successfully!";
-        },
-      },
+      success: "Request submitted successfully!",
       error: {
         render({ data }) {
-          return (
-            data?.response?.data?.message || "An unexpected error occurred."
-          );
+          // `data` is the error thrown
+          if (axios.isAxiosError(data)) {
+            setShowConfirmation(true);
+            setErrorMessage(
+              data.response?.data?.message ||
+                "An error occurred while submitting your request."
+            );
+            return (
+              data.response?.data?.message ||
+              "An error occurred while submitting your request."
+            );
+          }
+          return "An unexpected error occurred.";
         },
       },
     });
 
     try {
       await requestPromise;
-    } catch {
-      // Error already handled by toast
+
+      // Only update state after successful request
+      refetch();
+      setInputValue({
+        leaveType: "",
+        date: "",
+        noOfDays: null,
+      });
+    } catch (err) {
+      // Do nothing — toast already shows the error
+      console.error("Submission error (already handled by toast):", err);
     }
   };
 
@@ -96,6 +115,11 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     fetchRequest();
     refetch();
+    const interval = setInterval(() => {
+      fetchRequest();
+      refetch(); // refresh every 10 seconds
+    }, 5000); // 5 sec
+    return () => clearInterval(interval);
   }, [fetchRequest, refetch]);
 
   return (
@@ -111,7 +135,7 @@ const EmployeeDashboard = () => {
 
           <section className="flex flex-col items-center gap-5 pt-10">
             {/* Card 1 */}
-            <div className="w-[calc(100%-40px)]  h-24 bg-[#E6F4EA] rounded-lg shadow-2xl border p-4 flex items-center">
+            <div className="w-[calc(100%-40px)]  h-24 bg-[#121212] opacity-90 shadow-2xl border p-4 flex items-center">
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
                   <img
@@ -120,13 +144,13 @@ const EmployeeDashboard = () => {
                     className="w-15 h-15 animate-pulse"
                   />
                   <div>
-                    <h2 className="text-lg lg:text-2xl font-semibold text-[#23282D]">
+                    <h2 className="text-lg lg:text-2xl font-semibold text-[#A8A8A8]">
                       Remaining Leaves
                     </h2>
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-lg lg:text-4xl font-semibold">
+                  <h2 className="text-lg lg:text-4xl font-semibold text-[#A8A8A8]">
                     {remainingDates}
                   </h2>
                 </div>
@@ -135,29 +159,29 @@ const EmployeeDashboard = () => {
 
             {/* Cards 2 and 3 */}
             <div className="grid grid-cols-2 gap-5 w-[calc(100%-40px)]">
-              <div className="bg-[#D9E3DC] h-24 rounded-lg shadow-2xl border flex items-center p-4">
+              <div className="bg-[#121212] opacity-90 h-24 shadow-2xl border flex items-center p-4">
                 <div className="flex items-center justify-between w-full">
                   <div>
-                    <h2 className="text-lg lg:text-2xl font-semibold text-[#23282D]">
+                    <h2 className="text-lg lg:text-2xl font-semibold text-[#A8A8A8]">
                       Annual Leaves
                     </h2>
                   </div>
                   <div>
-                    <h2 className="text-lg lg:text-4xl font-semibold">
+                    <h2 className="text-lg lg:text-4xl font-semibold text-[#A8A8A8]">
                       {annual}
                     </h2>
                   </div>
                 </div>
               </div>
-              <div className="bg-[#F6EFD2] h-24 rounded-lg shadow-2xl border flex items-center p-4">
+              <div className="bg-[#121212] opacity-90 h-24 shadow-2xl border flex items-center p-4">
                 <div className="flex items-center justify-between w-full">
                   <div>
-                    <h2 className="text-lg lg:text-2xl font-semibold text-[#23282D]">
+                    <h2 className="text-lg lg:text-2xl font-semibold text-[#A8A8A8]">
                       Casual Leaves
                     </h2>
                   </div>
                   <div>
-                    <h2 className="text-lg lg:text-4xl font-semibold">
+                    <h2 className="text-lg lg:text-4xl font-semibold text-[#A8A8A8]">
                       {casual}
                     </h2>
                   </div>
@@ -192,7 +216,7 @@ const EmployeeDashboard = () => {
               </div>
               <div>
                 <button
-                  className="bg-[#4E6E44] text-[#FFFFFF] lg:text-3xl font-bold w-full rounded-2xl h-10 hover:bg-[#234325]"
+                  className="bg-gray-900 text-[#FFFFFF] lg:text-3xl font-bold w-full rounded-2xl h-10 hover:bg-[#121212]"
                   onClick={handleRequestFormClick}
                 >
                   Request Form
@@ -283,6 +307,18 @@ const EmployeeDashboard = () => {
         )}
       </div>
       <ToastContainer />
+      {showConfirmation && (
+        <AlertModel
+          message={errorMessage}
+          setShowConfirmation={setShowConfirmation}
+        />
+      )}
+      {showRequestForm && (
+        <AlertModel
+          message="You have no remaining leaves. Please contact your manager."
+          setShowConfirmation={setShowRequestForm}
+        />
+      )}
     </>
   );
 };

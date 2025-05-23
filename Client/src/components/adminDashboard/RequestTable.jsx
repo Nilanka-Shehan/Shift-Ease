@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const RequestTable = ({
   requests,
   setSelectedRequestId,
   setShowStatusDrawer,
+  setPendingCount,
 }) => {
+
+  useEffect(() => {
+    const count = requests.filter((r) => r.status === "Pending").length;
+    setPendingCount(count);
+  }, [requests, setPendingCount]);
+
   return (
     <div>
       <table className="w-full mb-8 border border-gray-400">
