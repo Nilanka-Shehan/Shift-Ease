@@ -11,7 +11,6 @@ import { useCallback } from "react";
 import AlertModel from "../../components/AlertModel";
 
 const EmployeeDashboard = () => {
-  const [showForm, setShowForm] = useState(false);
   const { user } = useAuth();
   const { refetch } = useRoleCheck();
   const formRef = useRef(null);
@@ -22,18 +21,25 @@ const EmployeeDashboard = () => {
     noOfDays: null,
   });
   const { leaveType, date, noOfDays } = inputValue;
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false); // to get backend error alert
+  const [showRequestForm, setShowRequestForm] = useState(false); // to show request form
+  const [showForm,setShowForm] = useState(false); 
+  const [showAlert, setShowAlert] = useState(false); // to show alert for pending
   const [errorMessage, setErrorMessage] = useState("");
   const [annual, setAnnual] = useState(7);
   const [casual, setCasual] = useState(14);
+  const [status,setStatus] = useState("");
   const remainingDates = annual + casual;
 
   const text = `If you would like to apply for leave on a specific date, please fill out the form below with all the required information. Ensure that the details provided are accurate to avoid any delays in processing your request.`;
 
   const handleRequestFormClick = () => {
-    if(remainingDates <= 0) {
+    if (remainingDates <= 0) {
       setShowRequestForm(true);
+      return;
+    }
+    if (status === "Pending") {
+      setShowAlert(true);
       return;
     }
     setShowForm(true);
@@ -107,6 +113,7 @@ const EmployeeDashboard = () => {
       const response = await axiosSecure.get(`/request/get-request/${user.id}`);
       setAnnual(response.data.annual);
       setCasual(response.data.casual);
+      setStatus(response.data.status);
     } catch (error) {
       console.error("Error fetching requests:", error);
     }
@@ -117,7 +124,6 @@ const EmployeeDashboard = () => {
     refetch();
     const interval = setInterval(() => {
       fetchRequest();
-      refetch(); // refresh every 10 seconds
     }, 5000); // 5 sec
     return () => clearInterval(interval);
   }, [fetchRequest, refetch]);
@@ -125,10 +131,7 @@ const EmployeeDashboard = () => {
   return (
     <>
       <div className="bg-[#F8F9F7] pt-20">
-        <div
-        // className="w-full bg-cover bg-center"
-        // style={{ backgroundImage: "url('/coverphoto.jpg')" }}
-        >
+        <div>
           <div>
             <h1 className="px-5 pt-5 text-4xl">Welcome {user.username}!</h1>
           </div>
@@ -287,6 +290,7 @@ const EmployeeDashboard = () => {
                     type="number"
                     id="noOfDays"
                     name="noOfDays"
+                    min={1}
                     onChange={handleOnChange}
                     className="w-full border rounded px-3 py-2 bg-[#F4FBF4] focus:outline-none focus:ring-2 focus:ring-[#B7C9A8]"
                     required
@@ -296,7 +300,6 @@ const EmployeeDashboard = () => {
                   <button
                     type="submit"
                     className="bg-[#4E6E44] text-white font-semibold px-6 py-2 rounded hover:bg-[#234325] transition"
-                    // onClick={setShowForm(false)}
                   >
                     Submit
                   </button>
@@ -317,6 +320,12 @@ const EmployeeDashboard = () => {
         <AlertModel
           message="You have no remaining leaves. Please contact your manager."
           setShowConfirmation={setShowRequestForm}
+        />
+      )}
+      {showAlert && (
+        <AlertModel
+          message="Your request is still pending approval !!" 
+          setShowConfirmation={setShowAlert}
         />
       )}
     </>

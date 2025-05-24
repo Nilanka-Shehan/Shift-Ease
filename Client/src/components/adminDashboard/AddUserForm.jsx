@@ -16,6 +16,7 @@ const AddUserForm = ({ setShowAddUserForm, handleSubmit, handleOnChange }) => {
           <input
             type="number"
             name="empNumber"
+            min={1}
             onChange={handleOnChange}
             className="w-full border px-2 py-1 rounded"
             placeholder="Enter employee number"

@@ -70,8 +70,27 @@ async function sendSetupEmail(email, link) {
   const mailOptions = {
     from: `"${process.env.SMTP_NAME}" <${process.env.SMTP_USER}>`,
     to: email,
-    subject: "Set up your account",
-    html: `<p>Welcome! Click <a href="${link}">here</a> to set up your account. This link expires in 24 hours.</p>`,
+    subject: "Set Up Your Account",
+    html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <div style="margin-bottom: 16px;">
+        <h2 style="color: #333;">Welcome to ${process.env.SMTP_NAME}!</h2>
+        <p>We're excited to have you on board. Please set up your account to get started.</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <a href="${link}" 
+           style="background-color: #007BFF; color: #ffffff; padding: 10px 20px; 
+                  text-decoration: none; border-radius: 5px; display: inline-block;">
+          Set Up Your Account
+        </a>
+      </div>
+
+      <div style="color: #555;">
+        <p>This link will expire in <strong>24 hours</strong>. If you have any questions, feel free to contact our support team.</p>
+      </div>
+    </div>
+  `,
   };
 
   await transporter.sendMail(mailOptions);

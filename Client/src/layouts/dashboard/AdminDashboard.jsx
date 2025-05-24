@@ -10,15 +10,18 @@ import RequestTable from "../../components/adminDashboard/RequestTable";
 import ActionDrawer from "../../components/adminDashboard/ActionDrawer";
 import AddUserForm from "../../components/adminDashboard/AddUserForm";
 import { useOutletContext } from "react-router-dom";
+import HistoryTable from "../../components/adminDashboard/historyTables/HistoryTable";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("requests");
   const [showAddUserForm, setShowAddUserForm] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const axiosSecure = useAxiosSecure();
   const [employees, setEmployees] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [history, setHistory] = useState([]);
   const [showStatusDrawer, setShowStatusDrawer] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const { user } = useAuth();
@@ -26,65 +29,50 @@ const AdminDashboard = () => {
   const { setCount } = useOutletContext();
   const [inputValue, setInputValue] = useState({ empNumber: null, email: "" });
 
-
   useEffect(() => {
-    setCount(pendingCount); 
+    setCount(pendingCount);
   }, [pendingCount, setCount]);
 
   const fetchUsers = useCallback(async () => {
-    //const toastId = toast.loading("Fetching users...");
     try {
       const response = await axiosSecure.get("/user/get-all");
       setEmployees(response.data);
-      // toast.update(toastId, {
-      //   render: "Users loaded successfully.",
-      //   type: "success",
-      //   isLoading: false,
-      //   autoClose: 2000,
-      // });
     } catch (error) {
       console.error("Error fetching users:", error);
-      // toast.update(toastId, {
-      //   render: "Failed to load users.",
-      //   type: "error",
-      //   isLoading: false,
-      //   autoClose: 3000,
-      // });
     }
   }, [axiosSecure]);
+
   const fetchRequests = useCallback(async () => {
-    //const toastId = toast.loading("Fetching requests...");
     try {
       const response = await axiosSecure("/request/get-all");
       setRequests(response.data);
-      // toast.update(toastId, {
-      //   render: "Requests loaded successfully.",
-      //   type: "success",
-      //   isLoading: false,
-      //   autoClose: 2000,
-      // });
     } catch (error) {
       console.error("Error fetching requests:", error);
-      // toast.update(toastId, {
-      //   render: "Failed to load requests.",
-      //   type: "error",
-      //   isLoading: false,
-      //   autoClose: 3000,
-      // });
+    }
+  }, [axiosSecure]);
+
+  const fetchHistory = useCallback(async () => {
+    try {
+      const response = await axiosSecure("/history/get-history");
+      setHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
     }
   }, [axiosSecure]);
 
   useEffect(() => {
+    fetchRequests();
     fetchUsers();
-    fetchRequests(); // initial fetch
+    fetchHistory();
 
     const interval = setInterval(() => {
+      fetchRequests();
       fetchUsers();
-      fetchRequests(); // refresh every 10 seconds
+      fetchHistory(); // refresh every 10 seconds
     }, 10000); // 10 sec
 
     return () => clearInterval(interval); // cleanup on unmount
-  }, [fetchUsers, fetchRequests]);
+  }, [fetchUsers, fetchRequests, fetchHistory]);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -116,12 +104,13 @@ const AdminDashboard = () => {
 
   const handleSetStatus = async (status) => {
     const toastId = toast.loading("Updating status...");
+    setLoading(true);
     try {
       const response = await axiosSecure.patch(
         `/request/update-status/${selectedRequestId}`,
         status
       );
-      if (response.success) {
+      if (response.data.success) {
         await fetchRequests();
         toast.update(toastId, {
           render: response.message,
@@ -146,6 +135,8 @@ const AdminDashboard = () => {
         autoClose: 3000,
       });
       console.error("Error while updating:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -206,7 +197,7 @@ const AdminDashboard = () => {
         </div>
         <div className="w-full mx-auto mt-8 bg-gray-100  px-10">
           {/* Tabs */}
-          <div className="flex gap-4 mb-4 pb-10">
+          <div className="flex gap-6 mb-4 pb-5">
             <button
               className={`border-b-2 pb-1 ${
                 activeTab === "requests"
@@ -233,6 +224,19 @@ const AdminDashboard = () => {
             >
               Employees
             </button>
+            <button
+              className={`border-b-2 pb-1 ${
+                activeTab === "history"
+                  ? "border-black font-semibold"
+                  : "border-transparent text-gray-600"
+              }`}
+              onClick={() => {
+                setActiveTab("history");
+                setShowAddUserForm(false);
+              }}
+            >
+              History
+            </button>
           </div>
 
           {/* Requests Table */}
@@ -242,6 +246,7 @@ const AdminDashboard = () => {
               setSelectedRequestId={setSelectedRequestId}
               setShowStatusDrawer={setShowStatusDrawer}
               setPendingCount={setPendingCount}
+              loading={loading}
             />
           )}
 
@@ -254,12 +259,17 @@ const AdminDashboard = () => {
                 setShowConfirmModal={setShowConfirmModal}
               />
               <button
-                className="border px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-fit mt-4"
                 onClick={() => setShowAddUserForm(true)}
               >
                 Add User
               </button>
             </div>
+          )}
+
+          {/* History Table */}
+          {activeTab === "history" && (
+            <HistoryTable histories={history || []} />
           )}
 
           {/* Add User Form */}

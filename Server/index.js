@@ -21,9 +21,11 @@ mongoose
 //Server End points
 const employeeRoutes = require("./api/routes/employeeRoutes");
 const requestRoutes = require("./api/routes/requestRoutes");
+const historyRoutes = require("./api/routes/historyRoutes");
 
 app.use("/user", employeeRoutes);
 app.use("/request", requestRoutes);
+app.use("/history", historyRoutes);
 
 // Start the server
 app.listen(port, () => {

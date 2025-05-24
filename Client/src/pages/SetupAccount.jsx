@@ -59,6 +59,7 @@ const SetupAccount = () => {
               type="String"
               name="username"
               placeholder="UserName"
+              minLength={3}
               onChange={handleOnChange}
               className="w-full mb-4 p-2 border-b-3 text-gray-800 font-bold"
             />
@@ -66,6 +67,7 @@ const SetupAccount = () => {
               type="password"
               name="password"
               placeholder="Password"
+              minLength={6}
               onChange={handleOnChange}
               className="w-full mb-4 p-2 border-b-3 text-gray-800 font-bold"
             />

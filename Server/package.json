@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
     "seed": "node admin-seed.js",
-    "start:prod": "npm run seed && node server.js"
+    "start:prod": "npm run seed && node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -23,7 +23,7 @@
     "google-auth-library": "^9.15.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.16.0",
-    "mongoose": "^8.14.1",
+    "mongoose": "^8.15.0",
     "node-cron": "^4.0.7",
     "nodemailer": "^6.10.1"
   },
