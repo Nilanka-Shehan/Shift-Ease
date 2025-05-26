@@ -192,7 +192,7 @@ const AdminDashboard = () => {
       <div className="pt-20 px-2 sm:px-4 md:px-6 lg:px-8 max-w-full md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto bg-[#94AEE3] min-h-screen">
         <div>
           <h1 className="px-2 sm:px-5 pt-5 text-2xl sm:text-3xl md:text-4xl">
-            Welcome {user.username.split(" ")[0]}!
+            Welcome {user?.username.split(" ")[0]}!
           </h1>
         </div>
         <div className="w-full mx-auto mt-4 pb-4 sm:mt-8 bg-gray-100 px-2 sm:px-4 md:px-8 lg:px-10 rounded-lg shadow-md">

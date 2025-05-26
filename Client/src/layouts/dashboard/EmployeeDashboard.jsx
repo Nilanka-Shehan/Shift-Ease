@@ -130,7 +130,7 @@ const EmployeeDashboard = () => {
 
   return (
     <>
-      <div className="bg-[#F8F9F7] pt-20">
+      <div className="bg-[#EAE4D5] pt-20">
         <div>
           <div>
             <h1 className="px-5 pt-5 text-4xl">Welcome {user.username}!</h1>

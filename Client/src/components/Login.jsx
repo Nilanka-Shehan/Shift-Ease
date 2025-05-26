@@ -19,12 +19,15 @@ const LoginModal = ({ onClose }) => {
       switch (role) {
         case "admin":
           navigate("dashboard/admin-dashboard");
+          window.location.reload();
           break;
         case "user":
           navigate("dashboard/employee-dashboard");
+          window.location.reload();
           break;
         default:
           navigate("/");
+          window.location.reload();
           break;
       }
     }
@@ -36,40 +39,40 @@ const LoginModal = ({ onClose }) => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const loadingToastId = toast.loading("Logging in...");
+    e.preventDefault();
+    const loadingToastId = toast.loading("Logging in...");
+    console.log(email, password);
 
-  try {
-    const response = await login(email, password);
-    if (response.success) {
+    try {
+      const response = await login(email, password);
+      if (response.success) {
+        toast.update(loadingToastId, {
+          render: response.message || "Login successful!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        refetch();
+      } else {
+        toast.update(loadingToastId, {
+          render: response.message || "Login failed.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
       toast.update(loadingToastId, {
-        render: response.message || "Login successful!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      refetch();
-    } else {
-      toast.update(loadingToastId, {
-        render: response.message || "Login failed.",
+        render: error.response?.data?.message || "An unexpected error occurred.",
         type: "error",
         isLoading: false,
         autoClose: 3000,
       });
     }
-  } catch (error) {
-    console.error("Login Error:", error);
-    toast.update(loadingToastId, {
-      render: error.response?.data?.message || "An unexpected error occurred.",
-      type: "error",
-      isLoading: false,
-      autoClose: 3000,
-    });
-  }
 
-  setInputValue({ email: "", password: "" });
-};
-
+    setInputValue({ email: "", password: "" });
+  };
 
   const handleGoogleLogin = () => {
     const client = window.google.accounts.oauth2.initCodeClient({
@@ -104,8 +107,8 @@ const LoginModal = ({ onClose }) => {
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-trnsparent backdrop-blur-md">
-        <div className="bg-white/30 backdrop-blur-sm p-8 rounded-lg shadow-lg w-[80vh] border border-white/40">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-md z-50">
+        <div className="bg-white/30 backdrop-blur-sm p-8 rounded-lg shadow-lg w-[80vw] max-w-md border border-white/40">
           <h2 className="flex justify-center text-2xl font-bold mb-4">Login</h2>
           <form onSubmit={handleSubmit}>
             <input
@@ -113,14 +116,17 @@ const LoginModal = ({ onClose }) => {
               name="email"
               placeholder="Email"
               onChange={handleOnChange}
-              className="w-full mb-4 p-2 border-b-3 text-white font-bold"
+              value={email}
+              className="w-full mb-4 p-2 border-b-2 text-white font-bold bg-transparent focus:outline-none focus:border-[#4BFD4B]"
+              autoFocus
             />
             <input
               type="password"
               name="password"
               placeholder="Password"
               onChange={handleOnChange}
-              className="w-full mb-4 p-2 border-b-3 text-white font-bold"
+              value={password}
+              className="w-full mb-4 p-2 border-b-2 text-white font-bold bg-transparent focus:outline-none focus:border-[#4BFD4B]"
             />
 
             <button

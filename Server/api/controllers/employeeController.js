@@ -268,13 +268,12 @@ const login = async (req, res) => {
         .status(404)
         .json({ message: "User Not Found!, please create an account" });
     }
-
+    // Remove sensitive logs in production
     const auth = await bcrypt.compare(password, employee.password);
-    //const auth = await (password === employee.password) ? true : false;
     if (!auth) {
+      console.log(email,password, employee.password);
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
     const token = jwt.sign({ id: employee._id }, process.env.ACCESS_JWT_TOKEN, {
       expiresIn: "10d",
     });
@@ -294,6 +293,7 @@ const login = async (req, res) => {
       token,
     });
   } catch (error) {
+    console.error("Login error:", error); // Improved error logging
     res.status(500).json({ message: "An error occurred during login" });
   }
 };

@@ -12,7 +12,9 @@ const createFirstAdmin = async () => {
     if (adminCount === 0) {
       await Employees.create({
         email: process.env.INITIAL_ADMIN_EMAIL,
-        password: await bcrypt.hash(process.env.INITIAL_ADMIN_PASSWORD, 10),
+        // password: await bcrypt.hash(process.env.INITIAL_ADMIN_PASSWORD, 10),
+        password:process.env.INITIAL_ADMIN_PASSWORD,
+        username:process.env.INITIAL_ADMIN_USERNAME,
         role: "admin",
       });
       console.log("Initial admin created");

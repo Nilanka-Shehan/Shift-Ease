@@ -32,7 +32,7 @@ const Home = () => {
         />
       </div>
       {/* Overlay Content */}
-      <div className="flex flex-col items-center justify-center h-full w-full relative z-10">
+      <div className="flex flex-col items-center justify-center h-full w-full z-10">
         <h1
           className="text-[#F5E20C] text-9xl font-i font-bold drop-shadow-lg"
           style={{ fontFamily: "'Inria Serif', serif" }}

@@ -20,7 +20,6 @@ const DashboardNavBar = ({ count }) => {
   const handleLogout = async () => {
     await logout();
     navigate("/");
-    window.location.reload;
   };
 
   return (
@@ -37,7 +36,7 @@ const DashboardNavBar = ({ count }) => {
             className="h-16 w-16 md:h-20 md:w-20 lg:h-28 lg:w-28 object-contain drop-shadow-lg transition-transform duration-300 hover:border-[#FFD700]"
           />
           <div className="flex items-center gap-10">
-            {user.role === "admin" && <NotificationBell count={count} />}
+            {user?.role === "admin" && <NotificationBell count={count} />}
             <GrLogout
               className="text-red-500 text-2xl"
               onClick={handleLogout}
