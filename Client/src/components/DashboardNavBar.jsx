@@ -31,7 +31,11 @@ const DashboardNavBar = ({ count }) => {
         } fixed top-0 left-0 w-full h-fit z-50`}
       >
         <div className="flex items-center justify-between w-full h-20 px-5">
-          <img src="/logo.jpg" alt="logo" className="w-15 h-15" />
+          <img
+            src="/logo.png"
+            alt="logo"
+            className="h-16 w-16 md:h-20 md:w-20 lg:h-28 lg:w-28 object-contain drop-shadow-lg transition-transform duration-300 hover:border-[#FFD700]"
+          />
           <div className="flex items-center gap-10">
             {user.role === "admin" && <NotificationBell count={count} />}
             <GrLogout

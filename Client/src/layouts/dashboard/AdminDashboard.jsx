@@ -189,15 +189,15 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <div className="pt-18 px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
+      <div className="pt-20 px-2 sm:px-4 md:px-6 lg:px-8 max-w-full md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl mx-auto bg-[#94AEE3] min-h-screen">
         <div>
-          <h1 className="px-5 pt-5 text-4xl">
+          <h1 className="px-2 sm:px-5 pt-5 text-2xl sm:text-3xl md:text-4xl">
             Welcome {user.username.split(" ")[0]}!
           </h1>
         </div>
-        <div className="w-full mx-auto mt-8 bg-gray-100  px-10">
+        <div className="w-full mx-auto mt-4 pb-4 sm:mt-8 bg-gray-100 px-2 sm:px-4 md:px-8 lg:px-10 rounded-lg shadow-md">
           {/* Tabs */}
-          <div className="flex gap-6 mb-4 pb-5">
+          <div className="flex flex-wrap gap-4 sm:gap-6 mb-4 pb-5 text-base sm:text-lg">
             <button
               className={`border-b-2 pb-1 ${
                 activeTab === "requests"
@@ -241,25 +241,27 @@ const AdminDashboard = () => {
 
           {/* Requests Table */}
           {activeTab === "requests" && (
-            <RequestTable
-              requests={requests || []}
-              setSelectedRequestId={setSelectedRequestId}
-              setShowStatusDrawer={setShowStatusDrawer}
-              setPendingCount={setPendingCount}
-              loading={loading}
-            />
+            <div className="overflow-x-auto">
+              <RequestTable
+                requests={requests || []}
+                setSelectedRequestId={setSelectedRequestId}
+                setShowStatusDrawer={setShowStatusDrawer}
+                setPendingCount={setPendingCount}
+                loading={loading}
+              />
+            </div>
           )}
 
           {/* Employees Table and Add User */}
           {activeTab === "employees" && !showAddUserForm && (
-            <div>
+            <div className="overflow-x-auto">
               <EmployeeTable
                 employees={employees}
                 setUserToDelete={setUserToDelete}
                 setShowConfirmModal={setShowConfirmModal}
               />
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-fit mt-4"
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full sm:w-fit mt-4"
                 onClick={() => setShowAddUserForm(true)}
               >
                 Add User
@@ -269,16 +271,20 @@ const AdminDashboard = () => {
 
           {/* History Table */}
           {activeTab === "history" && (
-            <HistoryTable histories={history || []} />
+            <div className="overflow-x-auto">
+              <HistoryTable histories={history || []} />
+            </div>
           )}
 
           {/* Add User Form */}
           {activeTab === "employees" && showAddUserForm && (
-            <AddUserForm
-              setShowAddUserForm={setShowAddUserForm}
-              handleSubmit={handleSubmit}
-              handleOnChange={handleOnChange}
-            />
+            <div className="overflow-x-auto">
+              <AddUserForm
+                setShowAddUserForm={setShowAddUserForm}
+                handleSubmit={handleSubmit}
+                handleOnChange={handleOnChange}
+              />
+            </div>
           )}
         </div>
       </div>
