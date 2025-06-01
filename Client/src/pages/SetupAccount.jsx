@@ -61,7 +61,7 @@ const SetupAccount = () => {
               placeholder="UserName"
               minLength={3}
               onChange={handleOnChange}
-              className="w-full mb-4 p-2 border-b-3 text-gray-800 font-bold"
+              className="w-full mb-4 p-2 border-b-2 text-black font-bold bg-transparent focus:outline-none focus:border-[#B50849]"
             />
             <input
               type="password"
@@ -69,14 +69,14 @@ const SetupAccount = () => {
               placeholder="Password"
               minLength={6}
               onChange={handleOnChange}
-              className="w-full mb-4 p-2 border-b-3 text-gray-800 font-bold"
+              className="w-full mb-4 p-2 border-b-2 text-black font-bold bg-transparent focus:outline-none focus:border-[#B50849]"
             />
 
             <button
               type="submit"
-              className="w-full bg-[#4BFD4B] text-black px-4 py-2 rounded-2xl hover:bg-[#3AD93A]"
+              className="w-full bg-[#E30B5D] text-black px-4 py-2 rounded-2xl hover:bg-[#B50849]"
             >
-              Change
+              Update
             </button>
           </form>
         </div>

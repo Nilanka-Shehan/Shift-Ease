@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { GrLogout } from "react-icons/gr";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import NotificationBell from "./adminDashboard/NotificationBell";
 
 const DashboardNavBar = ({ count }) => {
   const [isSticky, setSticky] = useState(false);
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,7 +19,7 @@ const DashboardNavBar = ({ count }) => {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/");
+    // navigate("/");
   };
 
   return (

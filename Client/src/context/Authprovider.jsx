@@ -72,7 +72,8 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setUser(null);
     localStorage.removeItem("access-token");
-    window.location.reload(); // Refresh the window after logout
+    window.location.replace('/');
+ // Refresh the window after logout
   };
 
   // Fetch user on component mount
